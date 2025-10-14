@@ -28,7 +28,9 @@ class _ExpensesState extends State<Expenses> {
       appBar: AppBar(
         title: const Text ('Expense Tracker'),
         actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.add))
+          IconButton(
+          onPressed: (){}, 
+          icon: const Icon(Icons.add))
         ],
       ),
       body:Column(
