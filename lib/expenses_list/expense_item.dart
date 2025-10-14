@@ -6,6 +6,8 @@ class ExpenseItem extends StatelessWidget{
   final Expense expense;
   @override
   Widget build(BuildContext context){
-    throw UnimplementedError();
+    return Card(
+      child:Text(expense.title)
+    );
   }
 }
