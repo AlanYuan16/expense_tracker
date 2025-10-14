@@ -11,6 +11,9 @@ class Expenses extends StatefulWidget{
 }
 
 class _ExpensesState extends State<Expenses> {
+  void _openAddExpenseOverlay(){
+    print("Button Pressed!");
+  }
 
   final List<Expense> _registeredExpenses = [
     Expense(
@@ -29,7 +32,7 @@ class _ExpensesState extends State<Expenses> {
         title: const Text ('Expense Tracker'),
         actions: [
           IconButton(
-          onPressed: (){}, 
+          onPressed: _openAddExpenseOverlay, 
           icon: const Icon(Icons.add))
         ],
       ),
