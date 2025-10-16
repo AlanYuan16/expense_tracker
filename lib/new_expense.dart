@@ -47,7 +47,10 @@ class _NewExpenseState extends State<NewExpense>{
               ),
             ),
             const SizedBox(width: 16),
-            Expanded(child: Row(children: [Text("Selected Date"),
+            Expanded(child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [Text("Selected Date"),
             IconButton(onPressed: (){}, icon: const Icon(Icons.calendar_month))],))
           ],
         ),
