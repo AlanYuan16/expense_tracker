@@ -6,8 +6,8 @@ import 'package:expense_tracker/models/expense.dart';
 final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
-
+  const NewExpense({super.key, required void Function(Expense expense) onAddExpense, required this.onAddExpense});
+  final void Function(Expense expense) onAddExpense;
   @override
   State<NewExpense> createState() {
     return _NewExpenseState();
@@ -31,7 +31,7 @@ class _NewExpenseState extends State<NewExpense> {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
 
-     if(_titleController.text.trim().isEmpty)
+     if(_titleController.text.trim().isEmpty || amountIsInvalid || _selectedDate == null)
     {
       //show some error -> tell the user is cant be empty
       showDialog(context: context,
@@ -46,7 +46,10 @@ class _NewExpenseState extends State<NewExpense> {
        ));
        return;
     }
-
+    widget.onAddExpense(
+      Expense(title: _titleController.text, amount: enteredAmount!, date: _selectedDate!, category: _selectedCategory)
+    );
+    Navigator.pop(context);
   }
   void _presentDatePicker() async {
     final now = DateTime.now();
@@ -65,7 +68,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(16,48,16,16),
       child: Column(
         children: [
           TextField(
@@ -94,12 +97,12 @@ class _NewExpenseState extends State<NewExpense> {
               const SizedBox(height: 16),
               Expanded(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end, // Align to the right
-                  crossAxisAlignment: CrossAxisAlignment.center, // Center vertically
+                  mainAxisAlignment: MainAxisAlignment.end, 
+                  crossAxisAlignment: CrossAxisAlignment.center, 
                   children: [
                     Text(_selectedDate == null
                         ? "No Date Chosen"
-                        : formatter.format(_selectedDate!)), // note to self: ! means "this nullable variable isnt null, trust me", so dart wont throw potential null exceptions/errors
+                        : formatter.format(_selectedDate!)), 
                     IconButton(
                       onPressed: () {
                         _presentDatePicker();
