@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:expense_tracker/models/expense.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key, required void Function(Expense expense) onAddExpense, required this.onAddExpense});
+  const NewExpense({super.key, required this.onAddExpense});
   final void Function(Expense expense) onAddExpense;
-  @override
+
   State<NewExpense> createState() {
     return _NewExpenseState();
   }
@@ -20,93 +19,101 @@ class _NewExpenseState extends State<NewExpense> {
   DateTime? _selectedDate;
   Category _selectedCategory = Category.leisure;
 
+  @override
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
     super.dispose();
   }
 
-  void _submitExpenseData(){
-   
+  void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-
-     if(_titleController.text.trim().isEmpty || amountIsInvalid || _selectedDate == null)
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) //run when an error happsns
     {
-      //show some error -> tell the user is cant be empty
-      showDialog(context: context,
-       builder: (ctx) => AlertDialog(
-        title: const Text("Invalid Input!"),
-        content: const Text("Please make sure you have valid inputs"),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.pop(ctx);
-          }, child: Text("ok!"),),
-        ]
-       ));
-       return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Invalid Input!"),
+          content: const Text(
+            "Please make sure to have a valid Title, Date, and Amount!",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Okay!"),
+            ),
+          ],
+        ),
+      );
+      return;
     }
     widget.onAddExpense(
-      Expense(title: _titleController.text, amount: enteredAmount!, date: _selectedDate!, category: _selectedCategory)
+      Expense(
+        title: _titleController.text,
+        amount: enteredAmount,
+        date: _selectedDate!,
+        category: _selectedCategory,
+      ),
     );
     Navigator.pop(context);
   }
+
   void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-    final chosenDate = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: now,
       firstDate: firstDate,
-      lastDate: DateTime.now(),
+      lastDate: now,
     );
     setState(() {
-      _selectedDate = chosenDate;
+      _selectedDate = pickedDate;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16,48,16,16),
+      padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(
+            controller: _titleController,
             maxLength: 50,
             keyboardType: TextInputType.name,
-            decoration: InputDecoration(label: Text("Title")),
-            controller: _titleController,
+            decoration: InputDecoration(label: Text('Title')),
           ),
           Row(
             children: [
               Expanded(
                 child: TextField(
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    prefixText: "\$ ",
+                    prefixText: '\$',
                     label: Text("Amount"),
                   ),
-                  controller: _amountController,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d*\.?\d{0,2}'),
-                    ),
-                  ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end, 
-                  crossAxisAlignment: CrossAxisAlignment.center, 
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(_selectedDate == null
-                        ? "No Date Chosen"
-                        : formatter.format(_selectedDate!)), 
+                    Text(
+                      _selectedDate == null
+                          ? 'Select A Date'
+                          : formatter.format(_selectedDate!),
+                    ),
                     IconButton(
-                      onPressed: () {
-                        _presentDatePicker();
-                      },
+                      onPressed: _presentDatePicker,
                       icon: const Icon(Icons.calendar_month),
                     ),
                   ],
@@ -114,27 +121,29 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
-
           Row(
             children: [
               DropdownButton(
                 value: _selectedCategory,
-                items: Category.values.map(
-                  (category) => DropdownMenuItem(
-                    value: category,
-                    child: Text(category.name.toUpperCase()),
-                  ),
-                ).toList(),
+                items: Category.values
+                    .map(
+                      (category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category.name.toUpperCase()),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (value) {
-                  if(value == null){
+                  if (value == null) {
                     return;
                   }
-                  setState((){
+                  setState(() {
                     _selectedCategory = value;
+                    print(_selectedCategory);
                   });
                 },
               ),
-              const Spacer(),
+              Spacer(),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -143,7 +152,7 @@ class _NewExpenseState extends State<NewExpense> {
               ),
               ElevatedButton(
                 onPressed: _submitExpenseData,
-                child: Text("Save"),
+                child: Text('Save Expense'),
               ),
             ],
           ),
