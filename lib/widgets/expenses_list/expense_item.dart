@@ -13,7 +13,7 @@ class ExpenseItem extends StatelessWidget{
         ),
         child: Column(
           children: [
-            Text(expense.title),
+            Text(expense.title, style: ThemeData().textTheme.titleLarge,),
             const SizedBox(height: 4),
             Row(children: [
               Text('\$${expense.amount.toStringAsFixed(2)}'),
