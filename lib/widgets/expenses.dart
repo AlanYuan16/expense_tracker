@@ -72,8 +72,6 @@ class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    print("Width ${MediaQuery.of(context).size.width}");
-    print("Height ${MediaQuery.of(context).size.height}");
     Widget mainContent = const Center(
       child: Text("Click the + button to add an Expense!"),
     );
@@ -86,7 +84,8 @@ class _ExpensesState extends State<Expenses> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Tracker'),
+        title: const Text('Expense Tracker'
+        ),
         actions: [
           IconButton(
             onPressed: _openAddExpenseOverlay,
